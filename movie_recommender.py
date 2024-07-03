@@ -6,17 +6,37 @@ from sklearn.metrics.pairwise import cosine_similarity
 import pickle
 import streamlit as st
 
+# loading the data from the csv file to apandas dataframe
+movies_data = pd.read_csv('movies.csv')
 
-# Loading the similarity scores from the pickle file
-with open('similarity_scores.pkl', 'rb') as file:
-    similarity = pickle.load(file)
+# # selecting the relevant features for recommendation
+
+selected_features = ['genres','keywords','tagline','cast','director']
+
+# replacing the null valuess with null string
+
+for feature in selected_features:
+  movies_data[feature] = movies_data[feature].fillna('')
+
+# # combining all the 5 selected features
+
+combined_features = movies_data['genres']+' '+movies_data['keywords']+' '+movies_data['tagline']+' '+movies_data['cast']+' '+movies_data['director']
 
 
+# # converting the text data to feature vectors
+
+vectorizer = TfidfVectorizer()
+
+feature_vectors = vectorizer.fit_transform(combined_features)
 
 # Loading the movies_data dataframe from the pickle file
 with open('movies_data.pkl', 'rb') as file:
     movies_data = pickle.load(file)
 
+
+# getting the similarity scores using cosine similarity
+
+similarity = cosine_similarity(feature_vectors)
 
 # Title
 st.title('Movie Recommendation System')
