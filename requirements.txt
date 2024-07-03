@@ -2,3 +2,4 @@ streamlit
 scikit-learn
 cdifflib
 pickle
+streamlit
